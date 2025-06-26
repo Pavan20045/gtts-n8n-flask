@@ -7,7 +7,7 @@ from flask import Flask, request, send_file, jsonify
 app = Flask(__name__)
 
 # Set your ElevenLabs API key here
-ELEVENLABS_API_KEY = "sk_372a64047cfec111ed7f9cc95ee50b4e35d67f3654594981"
+ELEVENLABS_API_KEY = "sk_983d6d267c0aac14ce298b28e118612d3be3c026c885939d"
 VOICE_ID = "XcWoPxj7pwnIgM3dQnWv"  # Deepa (Hindi female voice)
 
 # Function to clean bracketed and unnecessary parts from the text
