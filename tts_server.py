@@ -1,7 +1,7 @@
 from flask import Flask, request, send_file, jsonify
 from gtts import gTTS
+import tempfile
 import os
-import uuid
 
 app = Flask(__name__)
 
@@ -9,23 +9,17 @@ app = Flask(__name__)
 def tts():
     try:
         data = request.get_json()
-        text = data.get('text', '')
-        lang = data.get('lang', 'en')
+        text = data.get("text", "")
+        lang = data.get("lang", "en")  # default to English if not provided
 
         if not text:
-            return jsonify({'error': 'Text is required'}), 400
+            return jsonify({"error": "Missing 'text' parameter"}), 400
 
-        filename = f"{uuid.uuid4().hex}.mp3"
-        tts = gTTS(text, lang=lang)
-        tts.save(filename)
+        tts = gTTS(text=text, lang=lang)
+        temp_file = tempfile.NamedTemporaryFile(delete=False, suffix=".mp3")
+        tts.save(temp_file.name)
 
-        return send_file(filename, mimetype="audio/mpeg", as_attachment=True, download_name="output.mp3")
+        return send_file(temp_file.name, mimetype="audio/mpeg", as_attachment=True, download_name="speech.mp3")
+
     except Exception as e:
-        return jsonify({'error': str(e)}), 500
-    finally:
-        if os.path.exists(filename):
-            os.remove(filename)
-
-if __name__ == '__main__':
-    port = int(os.environ.get("PORT", 10000))
-    app.run(host='0.0.0.0', port=port)
+        return jsonify({"error": str(e)}), 500
